@@ -45,7 +45,7 @@ Or just wait until midnight UTC, it runs daily.
 ### 5. Add to your profile README
 
 ```markdown
-![GitHub Stats](https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/main/output/stats.svg)
+![GitHub Stats](https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/stats.svg)
 ```
 
 ## Local dev
