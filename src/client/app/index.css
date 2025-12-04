@@ -1,0 +1,41 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-track {
+	background: #252c30;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #fff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #b9c7d8;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+	* {
+		scrollbar-color: #fff transparent;
+	}
+}
+
+body {
+	height: 100vh;
+	background: #161b22;
+	display: flex;
+	flex-direction: column;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial,
+		sans-serif;
+}
+
+#app {
+	display: contents;
+}
