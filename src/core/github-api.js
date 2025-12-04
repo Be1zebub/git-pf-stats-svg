@@ -23,12 +23,11 @@ query($username: String!) {
 const REPO_STATS_QUERY = `
 query($username: String!, $cursor: String) {
   user(login: $username) {
-    repositories(first: 100, after: $cursor, ownerAffiliations: OWNER) {
+    repositories(first: 100, after: $cursor, ownerAffiliations: OWNER, privacy: PUBLIC) {
       totalCount
       nodes {
         stargazerCount
         forkCount
-        isPrivate
         isFork
       }
       pageInfo {
@@ -71,11 +70,10 @@ export class GitHubAPI {
 
 		const user = basicStats.data.user
 
-		// Sum stars and forks from all non-private, non-fork repos
 		let stars = 0
 		let forks = 0
 		for (const repo of repoStats) {
-			if (!repo.isPrivate && !repo.isFork) {
+			if (!repo.isFork) {
 				stars += repo.stargazerCount
 				forks += repo.forkCount
 			}
@@ -116,14 +114,12 @@ export class GitHubAPI {
 	}
 
 	async fetchTotalCommits() {
-		// First get contribution years
 		const yearsResult = await this.executeQuery(ALL_COMMITS_QUERY)
 		const years =
 			yearsResult.data.user.contributionsCollection.contributionYears
 
 		if (years.length === 0) return 0
 
-		// Build query for all years
 		const yearsQuery = years
 			.map((year) => YEAR_COMMITS_FRAGMENT(year))
 			.join("")
@@ -138,7 +134,6 @@ export class GitHubAPI {
 		const result = await this.executeQuery(query)
 		const userData = result.data.user
 
-		// Sum all commits from all years
 		let totalCommits = 0
 		for (const key of Object.keys(userData)) {
 			if (key.startsWith("year")) {
@@ -150,26 +145,33 @@ export class GitHubAPI {
 	}
 
 	async executeQuery(query, variables = {}) {
-		const response = await fetch(GITHUB_GRAPHQL_URL, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${this.token}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				query,
-				variables: { username: this.username, ...variables },
-			}),
-		})
+		let response
+
+		try {
+			response = await fetch(GITHUB_GRAPHQL_URL, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					query,
+					variables: { username: this.username, ...variables },
+				}),
+			})
+		} catch (err) {
+			throw new Error(`Network error: ${err.message}`)
+		}
 
 		if (!response.ok) {
-			throw new Error(`GitHub API error: ${response.status}`)
+			throw new Error(`GitHub API HTTP ${response.status}`)
 		}
 
 		const result = await response.json()
 
 		if (result.errors) {
-			throw new Error(result.errors[0].message)
+			const messages = result.errors.map((e) => e.message).join("; ")
+			throw new Error(`GitHub GraphQL: ${messages}`)
 		}
 
 		return result

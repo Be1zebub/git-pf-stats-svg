@@ -25,6 +25,7 @@ jobs:
 
             - name: Generate SVG
               env:
+                  NODE_ENV: production
                   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
                   GITHUB_USERNAME: ${{ github.repository_owner }}
               run: npm run build
