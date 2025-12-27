@@ -9,7 +9,6 @@ const hasCredentials = Boolean(token && username)
 
 const options = {
 	mock: args.includes("--mock") || !hasCredentials,
-	light: args.includes("--light"),
 	port: 3000,
 }
 
@@ -20,7 +19,6 @@ if (!args.includes("--mock") && !hasCredentials) {
 }
 
 console.log(`Mode: ${options.mock ? "mock" : "api"}`)
-console.log(`Theme: ${options.light ? "light" : "dark"}`)
 if (!options.mock) {
 	console.log(`Username: ${username}`)
 }

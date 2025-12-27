@@ -27,3 +27,8 @@ export class Theme {
 		})
 	}
 }
+
+export const themes = {
+	dark: Theme.dark(),
+	light: Theme.light(),
+}

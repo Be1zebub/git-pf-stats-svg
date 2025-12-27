@@ -1,11 +1,13 @@
 <script>
 	import { onMount } from "svelte"
 	import Logs from "./logs.svelte"
+	import ThemeSwitch from "./theme-switch.svelte"
 
 	let svgSrc = ""
 	let time = ""
 	let loading = true
 	let error = ""
+	let lightTheme = false
 
 	let logs = []
 
@@ -26,7 +28,7 @@
 		error = ""
 
 		try {
-			const res = await fetch("/api/svg")
+			const res = await fetch(`/api/svg/${lightTheme ? "light" : "dark"}`)
 			const data = await res.json()
 
 			if (data.error) {
@@ -46,7 +48,10 @@
 		}
 	}
 
+	let mounted = false
+
 	onMount(() => {
+		mounted = true
 		refreshSvg()
 
 		const events = new EventSource("/events")
@@ -66,25 +71,34 @@
 
 		return () => events.close()
 	})
+
+	let lastTheme = lightTheme
+	$: if (mounted && lastTheme !== lightTheme) {
+		lastTheme = lightTheme
+		refreshSvg()
+	}
 </script>
 
-<div class="container">
+<div class="theme-switcher">
+	<ThemeSwitch bind:lightTheme />
+</div>
+
+<div class="app-container">
 	<div class="svg-container">
 		{#if error}
-			<div class="placeholder error">Error: {error}</div>
+			<div class="svg-placeholder error">Error: {error}</div>
 		{:else if svgSrc}
 			<img src={svgSrc} alt="GitHub Stats" />
 		{:else}
-			<div class="placeholder">Loading...</div>
+			<div class="svg-placeholder">Loading...</div>
 		{/if}
 	</div>
 
-	<div class="status">
-		{#if time}
-			<p class="time">{time}</p>
-		{/if}
+	<div class="svg-status">
 		{#if loading}
-			<div class="loader"></div>
+			<div class="svg-loader"></div>
+		{:else if time}
+			<p class="svg-time">{time}</p>
 		{/if}
 	</div>
 </div>
@@ -92,7 +106,11 @@
 <Logs {logs} />
 
 <style>
-	.container {
+	.theme-switcher {
+		margin-inline: auto;
+		margin-block: 16px;
+	}
+	.app-container {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
@@ -101,40 +119,43 @@
 		gap: 16px;
 	}
 
-	.status {
+	.svg-status {
 		display: flex;
+		justify-content: center;
 		align-items: center;
+		background: transparent;
 		gap: 8px;
 		height: 20px;
 	}
 
-	.time {
+	.svg-time {
 		color: #8b949e;
 		font-size: 14px;
+		white-space: nowrap;
 	}
 
-	.loader {
+	.svg-loader {
 		width: 14px;
 		height: 14px;
 		border: 2px solid #30363d;
 		border-top-color: #58a6ff;
 		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
+		animation: svg-loader-spin 0.8s linear infinite;
 	}
 
-	@keyframes spin {
+	@keyframes svg-loader-spin {
 		to {
 			transform: rotate(360deg);
 		}
 	}
 
-	.placeholder {
+	.svg-placeholder {
 		color: #8b949e;
 		font-size: 14px;
 		padding: 20px;
 	}
 
-	.placeholder.error {
+	.svg-placeholder.error {
 		color: #f85149;
 	}
 </style>

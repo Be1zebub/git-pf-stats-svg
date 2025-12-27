@@ -42,12 +42,16 @@ export class HttpServer {
 	async handleRequest(req, res) {
 		const url = req.url === "/" ? "/index.html" : req.url
 
-		if (url === "/api/svg") {
-			return this.serveApi(res)
+		if (url === "/api/svg" || url === "/stats.svg") {
+			return this.serveSvg(res, undefined)
 		}
 
-		if (url === "/stats.svg") {
-			return this.serveSvg(res)
+		if (url === "/api/svg/dark" || url === "/dark.svg") {
+			return this.serveSvg(res, false)
+		}
+
+		if (url === "/api/svg/light" || url === "/light.svg") {
+			return this.serveSvg(res, true)
 		}
 
 		if (url === "/events") {
@@ -75,9 +79,9 @@ export class HttpServer {
 		res.end(content)
 	}
 
-	async serveApi(res) {
+	async serveSvg(res, lightTheme) {
 		try {
-			const { svg, time } = await this.generateFn()
+			const { svg, time } = await this.generateFn(lightTheme)
 			res.writeHead(200, {
 				"Content-Type": "application/json",
 				"Cache-Control": "no-cache",
@@ -86,20 +90,6 @@ export class HttpServer {
 		} catch (error) {
 			res.writeHead(200, { "Content-Type": "application/json" })
 			res.end(JSON.stringify({ error: error.message }))
-		}
-	}
-
-	async serveSvg(res) {
-		try {
-			const { svg } = await this.generateFn()
-			res.writeHead(200, {
-				"Content-Type": "image/svg+xml",
-				"Cache-Control": "no-cache",
-			})
-			res.end(svg)
-		} catch (error) {
-			res.writeHead(500)
-			res.end(`Error: ${error.message}`)
 		}
 	}
 

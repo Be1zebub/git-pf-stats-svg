@@ -3,7 +3,10 @@
 Yet another GitHub stats card generator.  
 Modern UI Github Action for your profiles.
 
-![GitHub Stats](./output/stats.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./output/dark.svg">
+  <img alt="Github stats" src="./output/light.svg">
+</picture>
 
 ## What it does
 
@@ -44,8 +47,19 @@ Or just wait until midnight UTC, it runs daily.
 
 ### 5. Add to your profile README
 
+Force dark theme:
+
 ```markdown
-![GitHub Stats](https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/main/output/stats.svg)
+![GitHub Stats](https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/dark.svg)
+```
+
+Auto theme:
+
+```markdown
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/dark.svg">
+  <img alt="Github stats" src="https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/light.svg">
+</picture>
 ```
 
 ## Local dev
@@ -58,18 +72,16 @@ npm i
 npm run dev
 
 # with mock data
-npm run dev -- --mock
+npm run dev:mock
 
-# build
+# build svg
 npm run build
+
+# build frontend
+npm run build:client
 ```
 
 To run dev server with actual data setup `.env`
-
-Flags:
-
-- `--mock` - use fake data
-- `--light` - light theme (default is dark)
 
 ## Stack
 

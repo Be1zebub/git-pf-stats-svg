@@ -1,15 +1,12 @@
 import "dotenv/config"
 import fs from "node:fs"
-import path from "node:path"
 import { GitHubAPI } from "./core/github-api.js"
 import { Stats } from "./core/stats.js"
-import { Theme } from "./core/theme.js"
+import { themes } from "./core/theme.js"
 import { SVGGenerator } from "./generator/svg-generator.js"
 
 const args = process.argv.slice(2)
 const isMock = args.includes("--mock")
-const isLight = args.includes("--light")
-const outputPath = "output/stats.svg"
 
 const token = process.env.GITHUB_TOKEN
 const username = process.env.GITHUB_USERNAME
@@ -35,19 +32,18 @@ async function main() {
 		statsData = new Stats(data)
 	}
 
-	console.log(`Theme: ${isLight ? "light" : "dark"}`)
-
-	const theme = isLight ? Theme.light() : Theme.dark()
-	const generator = new SVGGenerator(statsData, theme)
-	const svg = generator.generate()
-
-	const dir = path.dirname(outputPath)
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true })
+	if (!fs.existsSync("output")) {
+		fs.mkdirSync("output", { recursive: true })
 	}
 
-	fs.writeFileSync(outputPath, svg)
-	console.log(`SVG generated: ${outputPath}`)
+	for (const name in themes) {
+		const theme = themes[name]
+		const generator = new SVGGenerator(statsData, theme)
+		const svg = generator.generate()
+
+		fs.writeFileSync(`output/${name}.svg`, svg)
+		console.log(`SVG generated: output/${name}.svg`)
+	}
 }
 
 main().catch((err) => {

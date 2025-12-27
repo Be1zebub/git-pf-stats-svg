@@ -79,7 +79,7 @@ export class Server {
 		this.httpServer?.broadcast("log", { message, level, timestamp })
 	}
 
-	requestGenerate() {
+	requestGenerate(lightTheme = false) {
 		return new Promise((resolve, reject) => {
 			if (!this.generator || this.isRestarting) {
 				reject(new Error("restarting"))
@@ -94,7 +94,7 @@ export class Server {
 				id,
 				options: {
 					mock: this.options.mock,
-					light: this.options.light,
+					light: lightTheme,
 				},
 			})
 		})
@@ -119,11 +119,11 @@ export class Server {
 	}
 
 	startHttpServer() {
-		this.httpServer = new HttpServer(this.port, () =>
-			this.requestGenerate()
+		this.httpServer = new HttpServer(this.port, (lightTheme) =>
+			this.requestGenerate(lightTheme)
 		)
 		this.httpServer.start()
-		this.log(`Server started on port ${this.port}`)
+		this.log(`Dev server started on http://localhost:${this.port}`)
 	}
 
 	stop() {
