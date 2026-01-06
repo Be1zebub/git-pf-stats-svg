@@ -3,10 +3,8 @@
 Yet another GitHub stats card generator.  
 Modern UI Github Action for your profiles.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./output/dark.svg">
-  <img alt="Github stats" src="./output/light.svg">
-</picture>
+![dark stats](./output/dark.svg)
+![light stats](./output/light.svg)
 
 ## What it does
 
@@ -53,6 +51,8 @@ Force dark theme:
 ![GitHub Stats](https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/dark.svg)
 ```
 
+![dark stats](./output/dark.svg)
+
 Auto theme:
 
 ```markdown
@@ -61,6 +61,11 @@ Auto theme:
   <img alt="Github stats" src="https://github.com/YOUR_USERNAME/git-pf-stats-svg/raw/master/output/light.svg">
 </picture>
 ```
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./output/dark.svg">
+  <img alt="Github stats" src="./output/light.svg">
+</picture>
 
 ## Local dev
 
