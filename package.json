@@ -19,7 +19,7 @@
 		"chokidar": "^3.5.3",
 		"daisyui": "^5.5.14",
 		"dotenv": "^17.2.3",
-		"svelte": "^5.45.5",
+		"svelte": "^5.53.0",
 		"tailwindcss": "^4.1.18",
 		"vite": "^7.2.6"
 	}
